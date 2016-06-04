@@ -49,7 +49,10 @@ DES = Thread_unittest\
 	  BlockingQueue_bench\
 	  BoundedBlockingQueue_test\
 	  ThreadPool_test\
-	  Singleton_test
+	  Singleton_test\
+	  ThreadLocal_test\
+	  SingletonThreadLocal_test\
+	  ThreadLocalSingleton_test
 
 all:$(DES)
 
@@ -83,6 +86,15 @@ Mutex_test:Mutex_test.cpp
 	g++ $(CFLAGS) $^ -o $@  $(LDFLAGS)
 
 Singleton_test:Singleton_test.cpp
+	g++ $(CFLAGS) $^ -o $@  $(LDFLAGS)
+
+SingletonThreadLocal_test:SingletonThreadLocal_test.cpp
+	g++ $(CFLAGS) $^ -o $@  $(LDFLAGS)
+
+ThreadLocalSingleton_test:ThreadLocalSingleton_test.cpp
+	g++ $(CFLAGS) $^ -o $@  $(LDFLAGS)
+
+ThreadLocal_test:ThreadLocal_test.cpp
 	g++ $(CFLAGS) $^ -o $@  $(LDFLAGS)
 
 ThreadPool_test:ThreadPool_test.cpp
