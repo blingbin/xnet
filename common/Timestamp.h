@@ -22,7 +22,7 @@ public:
 
 	// Constucts an invalid Timestamp.
 	Timestamp() :
-			microSeconds_(0)
+			microSecondsSinceEpoch_(0)
 	{
 	}
 
@@ -34,7 +34,7 @@ public:
 
 	void swap(Timestamp& that)
 	{
-		std::swap(microSeconds_, that.microSeconds_);
+		std::swap(microSecondsSinceEpoch_, that.microSecondsSinceEpoch_);
 	}
 
 
@@ -43,17 +43,18 @@ public:
 
 	bool valid() const
 	{
-		return microSeconds_ > 0;
+		return microSecondsSinceEpoch_ > 0;
 	}
 
 	// for internal usage.
 	int64_t microSeconds() const
 	{
-		return microSeconds_;
+		return microSecondsSinceEpoch_;
 	}
-	time_t secondsSinceEpoch() const
+	int64_t microSecondsSinceEpoch() const { return microSecondsSinceEpoch_; }
+	time_t secondsSinceEpoch() const   //microSecondsSinceEpoch
 	{
-		return static_cast<time_t>(microSeconds_ / kmicroSeconds_PerSecond);
+		return static_cast<time_t>(microSecondsSinceEpoch_ / kmicroSeconds_PerSecond);
 	}
 
 
@@ -63,7 +64,7 @@ public:
 	static const int kmicroSeconds_PerSecond = 1000 * 1000;
 
 private:
-	int64_t microSeconds_;
+	int64_t microSecondsSinceEpoch_;
 };
 
 inline bool operator<(Timestamp left, Timestamp right)

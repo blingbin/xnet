@@ -10,15 +10,15 @@ using namespace xnet;
 BOOST_STATIC_ASSERT(sizeof(Timestamp) == sizeof(int64_t));
 
 Timestamp::Timestamp(int64_t microseconds) :
-		microSeconds_(microseconds)
+		microSecondsSinceEpoch_(microseconds)
 {
 }
 
 std::string Timestamp::toString() const
 {
 	char buf[32] = { 0 };
-	int64_t seconds = microSeconds_ / kmicroSeconds_PerSecond;
-	int64_t microseconds = microSeconds_ % kmicroSeconds_PerSecond;
+	int64_t seconds = microSecondsSinceEpoch_ / kmicroSeconds_PerSecond;
+	int64_t microseconds = microSecondsSinceEpoch_ % kmicroSeconds_PerSecond;
 	snprintf(buf, sizeof(buf)-1, "%" PRId64 ".%06" PRId64 "", seconds, microseconds);
 	return buf;   //pass by value
 }
@@ -26,8 +26,8 @@ std::string Timestamp::toString() const
 std::string Timestamp::toFormattedString() const
 {
 	char buf[32] = { 0 };
-	time_t seconds = static_cast<time_t>(microSeconds_ / kmicroSeconds_PerSecond);
-	int microseconds = static_cast<int>(microSeconds_ % kmicroSeconds_PerSecond);
+	time_t seconds = static_cast<time_t>(microSecondsSinceEpoch_ / kmicroSeconds_PerSecond);
+	int microseconds = static_cast<int>(microSecondsSinceEpoch_ % kmicroSeconds_PerSecond);
 	struct tm tm_time;
 	gmtime_r(&seconds, &tm_time);
 
