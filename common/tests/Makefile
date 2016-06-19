@@ -32,7 +32,7 @@ endif
 
 
 
-LDFLAGS = -rdynamic  ../commonlib.a  -lpthread
+LDFLAGS = -rdynamic  ../../libcommon.a  -lpthread
 
 INCDIRS = ../
 

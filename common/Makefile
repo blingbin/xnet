@@ -9,31 +9,30 @@ ARFLAGS = cr
 RM = -rm -rf
 MAKE = make
 
-CFLAGS = -Wall
 debug = y
 
+
+CFLAGS = -D_FILE_OFFSET_BITS=64\
+		 -Wall\
+		 -Wextra\
+		 -Werror\
+		 -Wconversion\
+		 -Wno-unused-parameter\
+		 -Wpointer-arith\
+		 -Wshadow\
+		 -Wwrite-strings\
+		 -march=native
+
+CPPFLAGS = -Wold-style-cast\
+		   -Woverloaded-virtual
+
 ifeq ($(debug), y)
-CFLAGS += -g
+	CFLAGS += -g
 else
-CFLAGS += -O2 -s
+	CFLAGS += -O2 -s
 endif
 
-DEFS =  -g\
-		-D_FILE_OFFSET_BITS=64\
-		-Wextra\
-		-Werror\
-		-Wconversion\
-		-Wno-unused-parameter\
-		-Wold-style-cast\
-		-Woverloaded-virtual\
-		-Wpointer-arith\
-		-Wshadow\
-		-Wwrite-strings\
-		-march=native
-
-CFLAGS += $(DEFS)
-
-LDFLAGS += -rdynamic
+DLDFLAGS += -rdynamic
 
 # source file(s), including c file(s) cpp file(s)
 # you can also use $(wildcard *.c), etc.
@@ -45,12 +44,14 @@ OBJ_C   := $(patsubst %.c,%.o,$(SRC_C))
 OBJ_CPP := $(patsubst %.cpp,%.o,$(SRC_CPP))
 
 
-LIB = commonlib.a
+LIB = libcommon.a
 
 
 $(LIB): $(OBJ_C) $(OBJ_CPP)
 	@echo "Generating static library: " $(notdir $@)
 	@$(AR) $(ARFLAGS)  $@ $^
+	make --no-print-directory post-build
+#	make clean
 
 
 
@@ -61,11 +62,17 @@ $(LIB): $(OBJ_C) $(OBJ_CPP)
 
 %.o: %.cpp
 	@echo "Compling: " $(addsuffix .cpp, $(basename $(notdir $@)))
-	@$(CXX) $(CFLAGS) -c $< -o $@
+	@$(CXX) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 clean:
 	@echo "cleaning..."
 	@$(RM) $(LIB)
 	@$(RM) *.o *.back *~
 
+post-build:
+	cp $(LIB) ../
+
+
 .PHONY: all clean
+.SECONDARY:post-build
+

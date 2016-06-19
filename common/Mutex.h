@@ -14,75 +14,77 @@
 namespace xnet
 {
 
-class MutexLock : boost::noncopyable
+class MutexLock: boost::noncopyable
 {
- public:
-  MutexLock()
-    : holder_(0)
-  {
-    int ret = pthread_mutex_init(&mutex_, NULL);
-    assert(ret == 0); (void) ret;
-  }
+public:
+	MutexLock() :
+			holder_(0)
+	{
+		int ret = pthread_mutex_init(&mutex_, NULL);
+		assert(ret == 0);
+		(void) ret;
+	}
 
-  ~MutexLock()
-  {
-    assert(holder_ == 0);
-    int ret = pthread_mutex_destroy(&mutex_);
-    assert(ret == 0); (void) ret;
-  }
+	~MutexLock()
+	{
+		assert(holder_ == 0);
+		int ret = pthread_mutex_destroy(&mutex_);
+		assert(ret == 0);
+		(void) ret;
+	}
 
-  bool isLockedByThisThread()
-  {
-    return holder_ == CurrentThread::tid();
-  }
+	bool isLockedByThisThread()
+	{
+		return holder_ == CurrentThread::tid();
+	}
 
-  void assertLocked()
-  {
-    assert(isLockedByThisThread());
-  }
+	void assertLocked()
+	{
+		assert(isLockedByThisThread());
+	}
 
-  // internal usage
+	// internal usage
 
-  void lock()
-  {
-    pthread_mutex_lock(&mutex_);
-    holder_ = CurrentThread::tid();
-  }
+	void lock()
+	{
+		pthread_mutex_lock(&mutex_);
+		holder_ = CurrentThread::tid();
+	}
 
-  void unlock()
-  {
-    holder_ = 0;
-    pthread_mutex_unlock(&mutex_);
-  }
+	void unlock()
+	{
+		holder_ = 0;
+		pthread_mutex_unlock(&mutex_);
+	}
 
-  pthread_mutex_t* getPthreadMutex() /* non-const */
-  {
-    return &mutex_;
-  }
+	pthread_mutex_t* getPthreadMutex() /* non-const */
+	{
+		return &mutex_;
+	}
 
- private:
+private:
 
-  pthread_mutex_t mutex_;
-  pid_t holder_;
+	pthread_mutex_t mutex_;
+	pid_t holder_;
 };
 
-class MutexLockGuard : boost::noncopyable
+class MutexLockGuard: boost::noncopyable
 {
- public:
-  explicit MutexLockGuard(MutexLock& mutex)
-    : mutex_(mutex)
-  {
-    mutex_.lock();
-  }
+public:
+	explicit MutexLockGuard(MutexLock& mutex) :
+			mutex_(mutex)
+	{
+		mutex_.lock();
+	}
 
-  ~MutexLockGuard()
-  {
-    mutex_.unlock();
-  }
+	~MutexLockGuard()
+	{
+		mutex_.unlock();
+	}
 
- private:
+private:
 
-  MutexLock& mutex_;
+	MutexLock& mutex_;
 };
 
 }
