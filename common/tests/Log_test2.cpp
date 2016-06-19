@@ -21,7 +21,7 @@ void dummyFlush()
 
 int main()
 {
-	g_file = ::fopen("/tmp/muduo_log", "ae");
+	g_file = ::fopen("/tmp/xnet_log", "ae");
 	Logger::setOutput(dummyOutput);
 	Logger::setFlush(dummyFlush);
 
