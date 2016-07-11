@@ -12,23 +12,19 @@
 namespace xnet
 {
 
-	class CountDownLatch: boost::noncopyable
-	{
-	public:
+class CountDownLatch: boost::noncopyable
+{
+public:
 
-		explicit CountDownLatch(int count);
-
-		void wait();
-
-		void countDown();
-
-		int getCount() const;
-
-	private:
-		mutable MutexLock mutex_;
-		Condition condition_;
-		int count_;
-	};
+	explicit CountDownLatch(int count);
+	void wait();
+	void countDown();
+	int getCount() const;
+private:
+	mutable MutexLock mutex_;
+	Condition condition_;
+	int count_;
+};
 
 }
 #endif  // _XNET_COMMON_COUNTDOWNLATCH_H_

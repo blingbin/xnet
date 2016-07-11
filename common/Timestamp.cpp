@@ -45,6 +45,6 @@ Timestamp Timestamp::now()
 
 Timestamp Timestamp::invalid()
 {
-  return Timestamp();
+	return Timestamp();
 }
 

@@ -1,7 +1,6 @@
 // Use of this source code is governed by a BSD-style license
 // that can be found in the License file.
 
-
 #ifndef _XNET_COMMON_BLOCKINGQUEUE_H_
 #define _XNET_COMMON_BLOCKINGQUEUE_H_
 
@@ -15,49 +14,46 @@
 namespace xnet
 {
 
-	template<typename T>
-		class BlockingQueue : boost::noncopyable
+template<typename T>
+class BlockingQueue: boost::noncopyable
+{
+public:
+	BlockingQueue() :
+					mutex_(), notEmpty_(mutex_), queue_()
 	{
-		public:
-			BlockingQueue()
-				: mutex_(),
-				notEmpty_(mutex_),
-				queue_()
+	}
+
+	void put(const T& x)
+	{
+		MutexLockGuard lock(mutex_);
+		queue_.push_back(x);
+		notEmpty_.notify();
+	}
+
+	T take()
+	{
+		MutexLockGuard lock(mutex_);
+		while (queue_.empty())
 		{
+			notEmpty_.wait();
 		}
+		assert(!queue_.empty());
+		T front(queue_.front());
+		queue_.pop_front();
+		return front;
+	}
 
-			void put(const T& x)
-			{
-				MutexLockGuard lock(mutex_);
-				queue_.push_back(x);
-				notEmpty_.notify(); // TODO: move outside of lock
-			}
+	size_t size() const
+	{
+		MutexLockGuard lock(mutex_);
+		return queue_.size();
+	}
 
-			T take()
-			{
-				MutexLockGuard lock(mutex_);
-				// always use a while-loop, due to spurious wakeup
-				while (queue_.empty())
-				{
-					notEmpty_.wait();
-				}
-				assert(!queue_.empty());
-				T front(queue_.front());
-				queue_.pop_front();
-				return front;
-			}
-
-			size_t size() const
-			{
-				MutexLockGuard lock(mutex_);
-				return queue_.size();
-			}
-
-		private:
-			mutable MutexLock mutex_;
-			Condition         notEmpty_;
-			std::deque<T>     queue_;
-	};
+private:
+	mutable MutexLock mutex_;
+	Condition notEmpty_;
+	std::deque<T> queue_;
+};
 
 }
 

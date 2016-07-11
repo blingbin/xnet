@@ -11,32 +11,23 @@
 namespace xnet
 {
 
-// Time notes in UTC, in micro Seconds
-
-// This class is immutable.
-// It's recommended to pass it by value, since it's passed in register on x64.
-
 class Timestamp
 {
 public:
 
-	// Constucts an invalid Timestamp.
 	Timestamp() :
 			microSecondsSinceEpoch_(0)
 	{
 	}
 
-	///
-	/// Constucts a Timestamp at specific time
-	///
-	/// @param micro Seconds Since 1970-01-01 00:00:00
+
 	explicit Timestamp(int64_t microSeconds);
+
 
 	void swap(Timestamp& that)
 	{
 		std::swap(microSecondsSinceEpoch_, that.microSecondsSinceEpoch_);
 	}
-
 
 	std::string toString() const;
 	std::string toFormattedString() const;
@@ -46,7 +37,6 @@ public:
 		return microSecondsSinceEpoch_ > 0;
 	}
 
-	// for internal usage.
 	int64_t microSeconds() const
 	{
 		return microSecondsSinceEpoch_;
@@ -58,7 +48,6 @@ public:
 	}
 
 
-	// Get time of now.
 	static Timestamp now();
 	static Timestamp invalid();
 	static const int kmicroSeconds_PerSecond = 1000 * 1000;
@@ -77,21 +66,12 @@ inline bool operator==(Timestamp left, Timestamp right)
 	return left.microSeconds() == right.microSeconds();
 }
 
-
-// Gets time slot between two Timestamp, result in seconds.
-// @param high, low
-// @return (high-low) in seconds
 inline double timeDifference(Timestamp high, Timestamp low)
 {
 	int64_t diff = high.microSeconds() - low.microSeconds();
 	return static_cast<double>(diff) / Timestamp::kmicroSeconds_PerSecond;
 }
 
-///
-/// Add @c seconds to given Timestamp.
-///
-/// @return Timestamp+seconds as Timestamp
-///
 inline Timestamp addTime(Timestamp timestamp, double seconds)
 {
 	int64_t delta = static_cast<int64_t>(seconds * Timestamp::kmicroSeconds_PerSecond);

@@ -2,7 +2,7 @@
 
 #include <errno.h>
 
-// returns true if time out, false otherwise.
+
 bool xnet::Condition::waitForSeconds(int seconds)
 {
   struct timespec abstime;

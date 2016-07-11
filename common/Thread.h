@@ -26,7 +26,7 @@ public:
 	{
 		return started_;
 	}
-	// pthread_t pthreadId() const { return pthreadId_; }
+
 	pid_t tid() const
 	{
 		return tid_;
